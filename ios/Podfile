@@ -7,31 +7,26 @@ ENV['MAPBOX_DOWNLOADS_TOKEN'] ||= 'sk.eyJ1Ijoicmlja2gybmQiLCJhIjoiY205MGNwd2J6MG
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
+# Include the Flutter pod helper to define flutter_install_all_ios_pods and flutter_additional_ios_build_settings.
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper.rb'))
+
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
   'Release' => :release,
 }
 
-# Prevent Cocoapods from creating a second Xcode workspace (we already have Runner.xcworkspace)
+# Prevent CocoaPods from creating a second Xcode workspace (we already have Runner.xcworkspace)
 workspace 'Runner.xcworkspace'
-
-# The following lines are the default from Flutter's Podfile template.
-# They ensure Flutter modules and plugins are recognized by CocoaPods.
-
-# You can remove or comment out this line if you want to enable dynamic frameworks.
-# use_frameworks!
 
 target 'Runner' do
   use_modular_headers!
   
-  # Flutter integration
-  # This block ensures all Flutter dependencies and plugins are installed.
+  # This installs all Flutter dependencies and plugins.
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
-  # Workaround for Flutter plugin hooks
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
   end
