@@ -1,0 +1,2 @@
+platform :ios, '12.0'
+ENV['MAPBOX_DOWNLOADS_TOKEN'] ||= 'sk.eyJ1Ijoicmlja2gybmQiLCJhIjoiY205MGNwd2J6MGY0ajJucHl6bjU2Z3hjeSJ9.A6c-vhIK_yYWkdwg3uw6dA'
