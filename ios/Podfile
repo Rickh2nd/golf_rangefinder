@@ -1,14 +1,9 @@
-# Uncomment this line to define a global platform for your project
 platform :ios, '12.0'
-
-# Add your Mapbox token here
-ENV['MAPBOX_DOWNLOADS_TOKEN'] ||= 'sk.eyJ1Ijoicmlja2gybmQiLCJhIjoiY205MGNwd2J6MGY0ajJucHl6bjU2Z3hjeSJ9.A6c-vhIK_yYWkdwg3uw6dA'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
-
-# Include the Flutter pod helper to define flutter_install_all_ios_pods and flutter_additional_ios_build_settings.
-require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper.rb'))
+# Set your Mapbox Downloads Token (make sure it has the correct scopes)
+ENV['MAPBOX_DOWNLOADS_TOKEN'] ||= 'sk.eyJ1Ijoicmlja2gybmQiLCJhIjoiY205MGNwd2J6MGY0ajJucHl6bjU2Z3hjeSJ9.A6c-vhIK_yYWkdwg3uw6dA'
 
 project 'Runner', {
   'Debug' => :debug,
@@ -16,13 +11,27 @@ project 'Runner', {
   'Release' => :release,
 }
 
-# Prevent CocoaPods from creating a second Xcode workspace (we already have Runner.xcworkspace)
-workspace 'Runner.xcworkspace'
+# Determine Flutter root by reading the Generated.xcconfig file.
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'))
+  unless File.exist?(generated_xcode_build_settings_path)
+    puts "Generated.xcconfig must exist. Run 'flutter build ios' first."
+    exit
+  end
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  abort("FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}.")
+end
+
+# Require the Flutter pod helper.
+require File.expand_path(File.join(flutter_root, 'packages', 'flutter_tools', 'bin', 'podhelper.rb'))
 
 target 'Runner' do
-  use_modular_headers!
+  # Uncomment this line if you want to use dynamic frameworks:
+  # use_frameworks!
   
-  # This installs all Flutter dependencies and plugins.
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
