@@ -1,0 +1,32 @@
+name: golf_rangefinder
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  mapbox_gl: ^0.16.0
+  http: ^0.13.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, uncomment the following lines and update the paths:
+  # assets:
+  #   - assets/images/
+  
+  # To add custom fonts to your application, uncomment and configure the fonts section:
+  # fonts:
+  #   - family: YourFontFamily
+  #     fonts:
+  #       - asset: fonts/YourFontFile.ttf
