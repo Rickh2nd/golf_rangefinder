@@ -14,10 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.3'  # or your desired Flutter version
+- name: Set up Flutter
+  uses: subosito/flutter-action@v2
+  with:
+    flutter-version: '3.19.3'  # This supports Dart >=3.7.0
+    channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
