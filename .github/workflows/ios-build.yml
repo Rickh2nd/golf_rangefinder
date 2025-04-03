@@ -1,32 +1,28 @@
 name: Build iOS Flutter App
 
 on:
-  workflow_dispatch:        # Allows manual trigger in GitHub UI
   push:
     branches:
-      - main                # Triggers on push to 'main' branch
+      - main
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: macos-latest   # macOS runner (required for iOS builds)
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-- name: Set up Flutter
-  uses: subosito/flutter-action@v2
-  with:
-    flutter-version: '3.19.3'  # This supports Dart >=3.7.0
-    channel: 'stable'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Install CocoaPods dependencies
-        working-directory: ios
-        run: |
-          pod install
 
       - name: Build iOS
         run: flutter build ios --release --no-codesign
