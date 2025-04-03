@@ -1,31 +1,31 @@
 name: golf_rangefinder
-description: "A new Flutter project."
-publish_to: 'none'
+description: "A Flutter-based golf rangefinder app using Mapbox."
+publish_to: 'none' # This prevents accidental publishing to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  mapbox_gl: ^0.16.0
   http: ^0.13.0
+  mapbox_gl: ^0.16.0
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true
 
-  # To add assets to your application, uncomment the following lines and update the paths:
+  # Uncomment and update if you add custom assets
   # assets:
   #   - assets/images/
-  
-  # To add custom fonts to your application, uncomment and configure the fonts section:
+
+  # Uncomment and update if you add custom fonts
   # fonts:
   #   - family: YourFontFamily
   #     fonts:

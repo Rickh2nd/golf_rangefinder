@@ -1,0 +1,33 @@
+workflows:
+  ios-release:
+    name: iOS Release Build
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        MAPBOX_ACCESS_TOKEN: sk.eyJ1Ijoicmlja2gybmQiLCJhIjoiY205MXA1NWtqMDNqazJpcHkzcHBvcWQ4eCJ9.FLm9Eeo-Vvl9WFJBSfVc_w
+      groups:
+        - app_store_credentials
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+          cd ..
+      - name: Build iOS release
+        script: |
+          flutter build ipa --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - rickh2nd@gmail.com
