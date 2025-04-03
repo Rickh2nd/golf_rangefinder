@@ -2,10 +2,14 @@ name: Build iOS Flutter App
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
-
+    branches: [ master ]
+on:
+  workflow_dispatch:  # <-- allows manual trigger
+  push:
+    branches:
+      - master
 jobs:
   build-ios:
     runs-on: macos-latest
