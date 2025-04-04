@@ -9,20 +9,21 @@ on:
 jobs:
   build-ios:
     name: Build iOS
-    runs-on: macos-latest
+    runs-on: macos-14
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Flutter
+      - name: Set up Flutter 3.19.3 (Dart 3.7.3)
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
+          cache: true
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS
+      - name: Build iOS (Release)
         run: flutter build ios --release --no-codesign
