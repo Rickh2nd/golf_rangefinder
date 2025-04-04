@@ -8,22 +8,34 @@ on:
 
 jobs:
   build-ios:
-    name: Build iOS
     runs-on: macos-14
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Flutter 3.19.3 (Dart 3.7.3)
+      - name: Set up Flutter 3.19.3
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
           cache: true
 
+      - name: Verify Flutter version
+        run: flutter --version
+
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS (Release)
+      - name: Set up .netrc for Mapbox SDK
+        run: |
+          echo "machine api.mapbox.com" > ~/.netrc
+          echo "login mapbox" >> ~/.netrc
+          echo "password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.netrc
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: pod install
+
+      - name: Build iOS (release, no codesign)
         run: flutter build ios --release --no-codesign
