@@ -1,6 +1,9 @@
 platform :ios, '12.0'
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
+# 💡 Use direct GitHub CocoaPods source instead of CDN
+source 'https://github.com/CocoaPods/Specs.git'
+
 flutter_application_path = File.expand_path('..', __dir__)
 podhelper_path = File.expand_path('packages/flutter_tools/bin/podhelper', flutter_application_path)
 
@@ -17,7 +20,6 @@ target 'Runner' do
   if defined?(flutter_install_all_ios_pods)
     flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   else
-    # Fallback: basic pods setup
     pod 'Flutter'
   end
 
@@ -32,4 +34,5 @@ post_install do |installer|
       flutter_additional_ios_build_settings(target)
     end
   end
+end
 end
