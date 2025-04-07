@@ -1,23 +1,9 @@
-# Minimum platform version
 platform :ios, '12.0'
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-# CocoaPods sources (CDN first, fallback to GitHub)
 source 'https://cdn.cocoapods.org/'
 source 'https://github.com/CocoaPods/Specs.git'
 
-# Set the Flutter application path
-flutter_application_path = File.expand_path('..', __dir__)
-podhelper_path = File.join(flutter_application_path, 'packages', 'flutter_tools', 'bin', 'podhelper')
-
-# Load flutter podhelper if available
-if File.exist?(podhelper_path + ".rb")
-  require podhelper_path
-else
-  puts "⚠️  Warning: podhelper.rb not found, skipping flutter_ios_podfile_setup"
-end
-
-# CocoaPods project setup
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
@@ -28,17 +14,23 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Install Flutter dependencies
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  # Flutter Engine Pods
+  pod 'Flutter', :path => '.flutter-plugins/flutter'
+
+  # Plugin pods (adjust as needed)
+  pod 'mapbox-ios-sdk', '6.4.1' # or use your custom setup if required
+
+  # Add any other plugin pods manually here based on pubspec.yaml
 
   target 'RunnerTests' do
     inherit! :search_paths
   end
 end
 
-# Post-install script to finalize build settings
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+    end
   end
 end
