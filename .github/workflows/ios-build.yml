@@ -3,37 +3,34 @@ name: iOS Build
 on:
   push:
     branches:
+      - main
       - master
- workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-13
+    name: Build iOS App
+    runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.2'
 
-      - name: Install Flutter dependencies
+      - name: Install Flutter Dependencies
         run: flutter pub get
 
-      - name: Set up .netrc for Mapbox SDK
-        run: |
-          echo "machine api.mapbox.com" > ~/.netrc
-          echo "login mapbox" >> ~/.netrc
-          echo "password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.netrc
-          chmod 600 ~/.netrc
+      - name: Set .netrc permissions to avoid CocoaPods error
+        run: chmod 600 ~/.netrc || true
 
       - name: Install CocoaPods
         run: |
-          sudo gem install cocoapods
           cd ios
           pod install
 
-      - name: Build iOS app
+      - name: Build iOS
         run: flutter build ios --release --no-codesign
