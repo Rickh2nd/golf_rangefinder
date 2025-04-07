@@ -27,11 +27,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Set up .netrc for Mapbox SDK
-        run: |
-          echo "machine api.mapbox.com" > ~/.netrc
-          echo "login mapbox" >> ~/.netrc
-          echo "password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.netrc
+- name: Set up .netrc for Mapbox SDK
+  run: |
+    echo "machine api.mapbox.com" > ~/.netrc
+    echo "login mapbox" >> ~/.netrc
+    echo "password ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.netrc
+    chmod 600 ~/.netrc
 
       - name: Install CocoaPods
         working-directory: ios
