@@ -1,0 +1,28 @@
+platform :ios, '13.0'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_installation()
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. Run 'flutter pub get' first."
+  end
+
+  require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), __dir__)
+  flutter_ios_podfile_setup
+end
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_installation()
+
+  pod 'Mapbox-iOS-SDK', '6.4.1'
+end
