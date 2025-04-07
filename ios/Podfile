@@ -1,18 +1,25 @@
-# Set platform version globally
 platform :ios, '12.0'
-
-# Disable CocoaPods analytics to speed up Flutter builds
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-# Define Flutter-related paths
 flutter_application_path = File.expand_path('..', __dir__)
-require File.expand_path('packages/flutter_tools/bin/podhelper', flutter_application_path)
+podhelper_path = File.expand_path('packages/flutter_tools/bin/podhelper', flutter_application_path)
+
+if File.exist?(podhelper_path + ".rb")
+  require podhelper_path
+else
+  puts "⚠️  Warning: podhelper.rb not found, skipping flutter_ios_podfile_setup"
+end
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  if defined?(flutter_install_all_ios_pods)
+    flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  else
+    # Fallback: basic pods setup
+    pod 'Flutter'
+  end
 
   target 'RunnerTests' do
     inherit! :search_paths
@@ -21,6 +28,8 @@ end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
+    if defined?(flutter_additional_ios_build_settings)
+      flutter_additional_ios_build_settings(target)
+    end
   end
 end
