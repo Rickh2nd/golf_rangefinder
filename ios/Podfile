@@ -13,11 +13,12 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Flutter engine pod
-  pod 'Flutter', :path => '../.flutter-plugins/Flutter'
+  flutter_application_path = File.expand_path('..', __dir__)
+  load File.join(flutter_application_path, '.flutter-plugins')
+  load File.join(flutter_application_path, '.flutter-plugins-dependencies')
 
-  # Example of a plugin - you must manually include your real plugins here
-  pod 'mapbox-ios-sdk', '6.4.1'
+  # This line pulls in all Flutter iOS pods
+  install_all_flutter_pods(flutter_application_path)
 
   target 'RunnerTests' do
     inherit! :search_paths
