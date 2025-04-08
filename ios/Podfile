@@ -1,7 +1,5 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '12.0'
+platform :ios, '13.0'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -10,30 +8,30 @@ project 'Runner', {
   'Release' => :release,
 }
 
-flutter_application_path = File.expand_path('..', __dir__)
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
 
-# Skip podhelper.rb since you are using GitHub Actions and no mac locally
-# Normally this would be:
-# require File.join(flutter_application_path, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
-# flutter_ios_podfile_setup
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Standard Flutter dependencies
-  pod 'Flutter', :path => File.join(flutter_application_path, '.ios', 'Flutter', 'engine')
-  pod 'FirebaseCore'  # example extra pod if you need it
-
-  target 'RunnerTests' do
-    inherit! :search_paths
-  end
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-    end
+    flutter_additional_ios_build_settings(target)
   end
 end

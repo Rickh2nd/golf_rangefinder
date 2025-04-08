@@ -1,48 +1,65 @@
-name: iOS Build
+name: Build Flutter iOS
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build_ios:
+  build-ios:
     runs-on: macos-latest
 
     env:
-      FLUTTER_VERSION: 3.29.2
+      FLUTTER_VERSION: '3.29.2'
       MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      # Setup Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
 
-      - name: Pre-cache Flutter iOS engine
-        run: flutter precache --ios
-
-      - name: Install Flutter Dependencies
-        run: flutter pub get
-
-      - name: Build iOS to generate Flutter podspec
-        run: flutter build ios --debug
-
-      - name: Set up .netrc for CocoaPods access
-        run: |
-          echo "machine api.mapbox.com" > ~/.netrc
-          echo "login mapbox" >> ~/.netrc
-          echo "password $MAPBOX_ACCESS_TOKEN" >> ~/.netrc
-          chmod 600 ~/.netrc
-
+      # Install CocoaPods explicitly
       - name: Install CocoaPods
         run: |
+          sudo gem install cocoapods
+          pod repo update
+
+      # Fetch dependencies
+      - name: Install Dependencies
+        run: |
+          flutter pub get
           cd ios
           pod install
+          cd ..
 
-      - name: Build completed
-        run: echo "✅ iOS build workflow finished successfully."
+      # Set up code signing using Apple credentials stored securely
+      - name: Setup code signing
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+
+      - name: Set up Provisioning Profiles
+        uses: apple-actions/download-provisioning-profiles@v3
+        with:
+          bundle-id: 'com.example.golfRangefinder'
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+
+      # Build the app
+      - name: Build iOS App
+        run: flutter build ios --debug --no-codesign
+
+      # (Optional) Upload Artifact for debugging
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/ios
