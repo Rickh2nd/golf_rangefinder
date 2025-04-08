@@ -1,7 +1,8 @@
+# Uncomment this line to define a global platform for your project
 platform :ios, '12.0'
-ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-source 'https://cdn.cocoapods.org/'
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
@@ -9,16 +10,20 @@ project 'Runner', {
   'Release' => :release,
 }
 
+flutter_application_path = File.expand_path('..', __dir__)
+
+# Skip podhelper.rb since you are using GitHub Actions and no mac locally
+# Normally this would be:
+# require File.join(flutter_application_path, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
+# flutter_ios_podfile_setup
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  flutter_application_path = File.expand_path('..', __dir__)
-  load File.join(flutter_application_path, '.flutter-plugins')
-  load File.join(flutter_application_path, '.flutter-plugins-dependencies')
-
-  # This line pulls in all Flutter iOS pods
-  install_all_flutter_pods(flutter_application_path)
+  # Standard Flutter dependencies
+  pod 'Flutter', :path => File.join(flutter_application_path, '.ios', 'Flutter', 'engine')
+  pod 'FirebaseCore'  # example extra pod if you need it
 
   target 'RunnerTests' do
     inherit! :search_paths
