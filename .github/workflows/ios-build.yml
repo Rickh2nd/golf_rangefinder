@@ -31,12 +31,15 @@ jobs:
           sudo gem install cocoapods
           pod repo update
 
-      # Fetch dependencies with token explicitly inline
+      # Corrected Install Dependencies step
       - name: Install Dependencies
         run: |
           flutter pub get
+          # Setup .netrc with your Mapbox token for authenticated downloads
+          echo "machine api.mapbox.com login mapbox password ${{ secrets.MAPBOX_ACCESS_TOKEN }}" > ~/.netrc
+          chmod 0600 ~/.netrc
           cd ios
-          MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_ACCESS_TOKEN }} pod install
+          pod install
           cd ..
 
       # Setup code signing (unchanged)
