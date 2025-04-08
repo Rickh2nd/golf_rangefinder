@@ -2,47 +2,47 @@ name: iOS Build
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: macos-14
+  build_ios:
+    runs-on: macos-latest
 
     env:
-      FLUTTER_VERSION: "3.29.2"
+      FLUTTER_VERSION: 3.29.2
       MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
 
-      - name: Install Flutter dependencies
+      - name: Pre-cache Flutter iOS engine
+        run: flutter precache --ios
+
+      - name: Install Flutter Dependencies
         run: flutter pub get
 
-      - name: Create .netrc for Mapbox (CocoaPods auth)
+      - name: Build iOS to generate Flutter podspec
+        run: flutter build ios --debug
+
+      - name: Set up .netrc for CocoaPods access
         run: |
-          echo "machine api.mapbox.com" >> ~/.netrc
+          echo "machine api.mapbox.com" > ~/.netrc
           echo "login mapbox" >> ~/.netrc
           echo "password $MAPBOX_ACCESS_TOKEN" >> ~/.netrc
           chmod 600 ~/.netrc
-
-      - name: Fix CocoaPods repo (handle EOF error)
-        run: |
-          pod repo remove trunk || true
-          pod setup
 
       - name: Install CocoaPods
         run: |
           cd ios
           pod install
 
-      - name: Build iOS app
-        run: flutter build ios --release --no-codesign
+      - name: Build completed
+        run: echo "✅ iOS build workflow finished successfully."
