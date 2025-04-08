@@ -31,16 +31,15 @@ jobs:
           sudo gem install cocoapods
           pod repo update
 
-      # Fetch dependencies and pass Mapbox token explicitly
+      # Fetch dependencies with token explicitly inline
       - name: Install Dependencies
         run: |
           flutter pub get
           cd ios
-          export MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_ACCESS_TOKEN }}
-          pod install
+          MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_ACCESS_TOKEN }} pod install
           cd ..
 
-      # Setup Code signing (unchanged)
+      # Setup code signing (unchanged)
       - name: Setup code signing
         uses: apple-actions/import-codesign-certs@v3
         with:
